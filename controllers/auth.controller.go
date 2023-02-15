@@ -23,6 +23,7 @@ func NewAuthController(authService services.AuthService, userService services.Us
 }
 
 func (ac *AuthController) SignUpUser(ctx *gin.Context) {
+	fmt.Println("qwe")
 	var user *models.SignUpInput
 
 	if err := ctx.ShouldBindJSON(&user); err != nil {

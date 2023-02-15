@@ -10,7 +10,7 @@ type SignUpInput struct {
 	Name            string    `json:"name" bson:"name" binding:"required"`
 	Email           string    `json:"email" bson:"email" binding:"required"`
 	Password        string    `json:"password" bson:"password" binding:"required,min=8"`
-	PasswordConfirm string    `json:"passwordConfirm" bson:"passwordConfirm,omitempty" binding:"reuired"`
+	PasswordConfirm string    `json:"passwordConfirm" bson:"passwordConfirm,omitempty" binding:"required"`
 	Role            string    `json:"role" bson:"role"`
 	Verified        bool      `json:"verifed" bson:"verifed"`
 	CreatedAt       time.Time `json:"creted_at" bson:"created_at"`
