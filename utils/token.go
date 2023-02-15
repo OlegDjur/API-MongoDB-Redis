@@ -35,7 +35,7 @@ func CreateToken(ttl time.Duration, payload interface{}, privateKey string) (str
 	return token, nil
 }
 
-func ValidateToke(token string, publicKey string) (interface{}, error) {
+func ValidateToken(token string, publicKey string) (interface{}, error) {
 	dacodePublicKey, err := base64.StdEncoding.DecodeString(publicKey)
 	if err != nil {
 		return nil, fmt.Errorf("cloud not decode: %w", err)

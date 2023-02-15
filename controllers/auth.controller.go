@@ -10,7 +10,6 @@ import (
 	"github.com/OlegDjur/API-MongoDB-Redis/services"
 	"github.com/OlegDjur/API-MongoDB-Redis/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/go-delve/delve/pkg/config"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -103,7 +102,7 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 		return
 	}
 
-	config, _ := config.LoadConfig(".")
+	config, _ := configs.LoadConfig(".")
 
 	sub, err := utils.ValidateToke(cookie, config.RefreshTokenPublicKey)
 	if err != nil {
