@@ -19,7 +19,7 @@ func NewUserServiceImpl(collection *mongo.Collection, ctx context.Context) *User
 	return &UserServiceImpl{collection, ctx}
 }
 
-func (us *UserServiceImpl) FindUserById(id string) (*models.DBResponse, error) {
+func (us *UserServiceImpl) FindUserByID(id string) (*models.DBResponse, error) {
 	oid, _ := primitive.ObjectIDFromHex(id)
 
 	var user *models.DBResponse
