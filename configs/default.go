@@ -36,3 +36,5 @@ func LoadConfig(path string) (config Config, err error) {
 
 	return
 }
+
+// protoc --go_out=. --go-grpc_out=. proto/greet.proto

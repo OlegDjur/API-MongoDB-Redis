@@ -1,4 +1,4 @@
-package controller
+package controllers
 
 import (
 	"fmt"
@@ -104,7 +104,7 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 
 	config, _ := configs.LoadConfig(".")
 
-	sub, err := utils.ValidateToke(cookie, config.RefreshTokenPublicKey)
+	sub, err := utils.ValidateToken(cookie, config.RefreshTokenPublicKey)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": err.Error()})
 		return
