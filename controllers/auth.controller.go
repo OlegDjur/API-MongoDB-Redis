@@ -1,7 +1,10 @@
 package controllers
 
 import (
+	"context"
 	"fmt"
+	"html/template"
+	"log"
 	"net/http"
 	"strings"
 
@@ -10,20 +13,23 @@ import (
 	"github.com/OlegDjur/API-MongoDB-Redis/services"
 	"github.com/OlegDjur/API-MongoDB-Redis/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/thanhpk/randstr"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type AuthController struct {
 	authService services.AuthService
 	userService services.UserService
+	ctx         context.Context
+	collection  *mongo.Collection
+	temp        *template.Template
 }
 
-func NewAuthController(authService services.AuthService, userService services.UserService) AuthController {
-	return AuthController{authService, userService}
+func NewAuthController(authService services.AuthService, userService services.UserService, ctx context.Context, collection *mongo.Collection, temp *template.Template) AuthController {
+	return AuthController{authService, userService, ctx, collection, temp}
 }
 
 func (ac *AuthController) SignUpUser(ctx *gin.Context) {
-	fmt.Println("qwe")
 	var user *models.SignUpInput
 
 	if err := ctx.ShouldBindJSON(&user); err != nil {
@@ -46,7 +52,39 @@ func (ac *AuthController) SignUpUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": gin.H{"user": models.FilteredResponse(newUser)}})
+	config, err := configs.LoadConfig(".")
+	if err != nil {
+		log.Fatal("Cloud not load config", err)
+	}
+
+	//  Generate Verification Code
+	code := randstr.String(20)
+
+	varificationCode := utils.Encode(code)
+
+	// Update User in Database
+	ac.userService.UpdateUserByID(newUser.ID.Hex(), "verificationCode", varificationCode)
+
+	firstName := newUser.Name
+
+	if strings.Contains(firstName, " ") {
+		firstName = strings.Split(firstName, " ")[1]
+	}
+
+	// Send Email
+	emailData := utils.EmailData{
+		URL:       config.Origin + "/verifyemail/" + code,
+		FirstName: firstName,
+		Subject:   "Your account verification code",
+	}
+	err = utils.SendEmail(newUser, &emailData, ac.temp, "verificationCode.html")
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "success", "message": "There was an error sending email"})
+		return
+	}
+
+	message := "We sent an email with a verification code to " + user.Email
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "message": message})
 }
 
 func (ac *AuthController) SignInUser(ctx *gin.Context) {
