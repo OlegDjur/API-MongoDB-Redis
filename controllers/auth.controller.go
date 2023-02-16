@@ -30,6 +30,7 @@ func NewAuthController(authService services.AuthService, userService services.Us
 }
 
 func (ac *AuthController) SignUpUser(ctx *gin.Context) {
+	fmt.Println("qwe")
 	var user *models.SignUpInput
 
 	if err := ctx.ShouldBindJSON(&user); err != nil {
@@ -63,7 +64,7 @@ func (ac *AuthController) SignUpUser(ctx *gin.Context) {
 	varificationCode := utils.Encode(code)
 
 	// Update User in Database
-	ac.userService.UpdateUserByID(newUser.ID.Hex(), "verificationCode", varificationCode)
+	ac.userService.UpdateUserById(newUser.ID.Hex(), "verificationCode", varificationCode)
 
 	firstName := newUser.Name
 

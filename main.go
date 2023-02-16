@@ -40,7 +40,7 @@ var (
 )
 
 func init() {
-	temp = template.Must(template.ParseGlob("template/*.html"))
+	temp = template.Must(template.ParseGlob("templates/*.html"))
 	config, err := configs.LoadConfig(".")
 	if err != nil {
 		log.Fatal("Could not load environment variables", err)

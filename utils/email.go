@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"crypto/tls"
+	"fmt"
 	"html/template"
 	"log"
 
@@ -31,7 +32,7 @@ func SendEmail(user *models.DBResponse, data *EmailData, temp *template.Template
 	to := user.Email
 	smtpHost := config.SMTPHost
 	smtpPort := config.SMTPPort
-
+	fmt.Println(from, to)
 	var body bytes.Buffer
 
 	if err := temp.ExecuteTemplate(&body, templateName, &data); err != nil {
@@ -51,6 +52,7 @@ func SendEmail(user *models.DBResponse, data *EmailData, temp *template.Template
 
 	// Send Email
 	if err := d.DialAndSend(m); err != nil {
+		fmt.Println(err)
 		return err
 	}
 	return nil
